@@ -1,0 +1,857 @@
+{
+  "title": "About MumbleFoo Plugin",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "fd3576b7a3347dee",
+      "text": "Here we describe the purpose of the plugin and include a sample."
+    },
+    {
+      "type": "mumblefoo",
+      "id": "d504f43bd9d48f54",
+      "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot go go go go root\nroot"
+    },
+    {
+      "type": "paragraph",
+      "id": "f561b962a1dd2799",
+      "text": "<h3> Method"
+    },
+    {
+      "type": "paragraph",
+      "id": "dd00fe4fd3061f45",
+      "text": "We created this plugin as a trial for live coding at the [[Open Source Bridge]] conference. Here we list logical steps for recreating such a plugin."
+    },
+    {
+      "type": "paragraph",
+      "id": "3cb064739dea54e6",
+      "text": "Create a new plugin with the <b>shell</b> command."
+    },
+    {
+      "type": "code",
+      "id": "193aa1845b7f5ce9",
+      "text": "./mkplugin.sh MumbleTwo\n./builder.pl"
+    },
+    {
+      "type": "paragraph",
+      "id": "b6534cf71ec71552",
+      "text": "Write a <b>compiler</b> to parse text with regular expressions. Start with a simple program."
+    },
+    {
+      "type": "paragraph",
+      "id": "802263b420eb5b8b",
+      "text": "Write a <b>pretty printer</b> that renders the parsed text."
+    },
+    {
+      "type": "paragraph",
+      "id": "c5d791b36f5da518",
+      "text": "Write rendering functions that draws <b>marks</b> on top of the pretty printed text. Create a div to hold them."
+    },
+    {
+      "type": "paragraph",
+      "id": "db151d093a481ac3",
+      "text": "Write an <b>apply</b> function that interprets primitive commands like go, left and right."
+    },
+    {
+      "type": "paragraph",
+      "id": "0f69198e74910bc0",
+      "text": "Write a <b>fetch</b> function that finds a good definition for commands that aren't primitives."
+    },
+    {
+      "type": "paragraph",
+      "id": "2949cd1c6f8b006f",
+      "text": "Write a <b>fork</b> command that runs fetched commands after a small delay."
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "item": {
+        "title": "About MumbleFoo Plugin",
+        "story": [
+          {
+            "type": "paragraph",
+            "id": "fd3576b7a3347dee",
+            "text": "Here we describe the purpose of the plugin and include a sample."
+          },
+          {
+            "type": "mumblefoo",
+            "id": "d504f43bd9d48f54",
+            "text": "This is text in the new plugin. You can double-click to edit it too."
+          }
+        ]
+      },
+      "date": 1371360246000,
+      "certificate": "from mkplugin.sh"
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "This is text in the new plugin. You can double-click to edit it too. foo"
+      },
+      "date": 1371410935730
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root\nroot left root\nroot right root\nroot "
+      },
+      "date": 1371412169664
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371412376840
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371417848658
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go left go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418201865
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418218152
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go right go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418252332
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go right go go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418264921
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go go go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418279187
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go left go go go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418587345
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go left go go go right go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371418596561
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go left left go go go left left go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371419009465
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371420316412
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371420349641
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left root\nroot right root\nroot root root\nroot"
+      },
+      "date": 1371420367114
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left root\nroot right root\nroot"
+      },
+      "date": 1371420932777
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left go root\nroot right go root\nroot"
+      },
+      "date": 1371420981837
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left go root\nroot right go root\n"
+      },
+      "date": 1371421642673
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go go go root\nroot left go root\nroot right go root\nroot\n"
+      },
+      "date": 1371421662365
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root root root\nroot go go go go root\nroot left go root\nroot right go root\nroot\n"
+      },
+      "date": 1371421858671
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root root root\nroot go go go go root\nroot left go root\nroot right go root\nroot\nroot\n"
+      },
+      "date": 1371421898774
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot\nroot\n"
+      },
+      "date": 1371422002561
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot\n"
+      },
+      "date": 1371422366608
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot\n"
+      },
+      "date": 1371422477236
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "f561b962a1dd2799"
+      },
+      "id": "f561b962a1dd2799",
+      "type": "add",
+      "after": "d504f43bd9d48f54",
+      "date": 1371434977023
+    },
+    {
+      "type": "edit",
+      "id": "f561b962a1dd2799",
+      "item": {
+        "type": "paragraph",
+        "id": "f561b962a1dd2799",
+        "text": "<h3> Method"
+      },
+      "date": 1371435040274
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "dd00fe4fd3061f45",
+        "text": ""
+      },
+      "id": "dd00fe4fd3061f45",
+      "type": "add",
+      "after": "f561b962a1dd2799",
+      "date": 1371435040790
+    },
+    {
+      "type": "edit",
+      "id": "dd00fe4fd3061f45",
+      "item": {
+        "type": "paragraph",
+        "id": "dd00fe4fd3061f45",
+        "text": "We created this plugin as a trial for live coding at the [[Open Source Bridge]] conference."
+      },
+      "date": 1371435084175
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "95792f6447079d96",
+        "text": ""
+      },
+      "id": "95792f6447079d96",
+      "type": "add",
+      "after": "dd00fe4fd3061f45",
+      "date": 1371435084684
+    },
+    {
+      "type": "remove",
+      "id": "95792f6447079d96",
+      "date": 1371435087144
+    },
+    {
+      "type": "edit",
+      "id": "dd00fe4fd3061f45",
+      "item": {
+        "type": "paragraph",
+        "id": "dd00fe4fd3061f45",
+        "text": "We created this plugin as a trial for live coding at the [[Open Source Bridge]] conference. Here we list logical steps for recreating such a plugin."
+      },
+      "date": 1371435104311
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "3cb064739dea54e6",
+        "text": ""
+      },
+      "id": "3cb064739dea54e6",
+      "type": "add",
+      "after": "dd00fe4fd3061f45",
+      "date": 1371435104817
+    },
+    {
+      "type": "edit",
+      "id": "3cb064739dea54e6",
+      "item": {
+        "type": "paragraph",
+        "id": "3cb064739dea54e6",
+        "text": "Create a new plugin with the shell command."
+      },
+      "date": 1371435137436
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "b6534cf71ec71552",
+        "text": ""
+      },
+      "id": "b6534cf71ec71552",
+      "type": "add",
+      "after": "3cb064739dea54e6",
+      "date": 1371435137941
+    },
+    {
+      "type": "edit",
+      "id": "b6534cf71ec71552",
+      "item": {
+        "type": "paragraph",
+        "id": "b6534cf71ec71552",
+        "text": "Write a compiler  to parse the text with regular expressions."
+      },
+      "date": 1371435204621
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "802263b420eb5b8b",
+        "text": ""
+      },
+      "id": "802263b420eb5b8b",
+      "type": "add",
+      "after": "b6534cf71ec71552",
+      "date": 1371435205130
+    },
+    {
+      "type": "edit",
+      "id": "802263b420eb5b8b",
+      "item": {
+        "type": "paragraph",
+        "id": "802263b420eb5b8b",
+        "text": "Write a pretty printer that renders the parsed text."
+      },
+      "date": 1371435223300
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "c5d791b36f5da518",
+        "text": ""
+      },
+      "id": "c5d791b36f5da518",
+      "type": "add",
+      "after": "802263b420eb5b8b",
+      "date": 1371435223804
+    },
+    {
+      "type": "edit",
+      "id": "c5d791b36f5da518",
+      "item": {
+        "type": "paragraph",
+        "id": "c5d791b36f5da518",
+        "text": "Write rendering functions that draw on top of the pretty text."
+      },
+      "date": 1371435273072
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "db151d093a481ac3",
+        "text": ""
+      },
+      "id": "db151d093a481ac3",
+      "type": "add",
+      "after": "c5d791b36f5da518",
+      "date": 1371435273580
+    },
+    {
+      "type": "edit",
+      "id": "db151d093a481ac3",
+      "item": {
+        "type": "paragraph",
+        "id": "db151d093a481ac3",
+        "text": "Write an apply function that interprets primitive commands like go, left and right."
+      },
+      "date": 1371435338229
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "07bd3c0eee6dcf10",
+        "text": ""
+      },
+      "id": "07bd3c0eee6dcf10",
+      "type": "add",
+      "after": "db151d093a481ac3",
+      "date": 1371435338734
+    },
+    {
+      "type": "remove",
+      "id": "07bd3c0eee6dcf10",
+      "date": 1371435343348
+    },
+    {
+      "type": "edit",
+      "id": "c5d791b36f5da518",
+      "item": {
+        "type": "paragraph",
+        "id": "c5d791b36f5da518",
+        "text": "Write rendering functions that draws marks on top of the pretty printed text."
+      },
+      "date": 1371435354991
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "0f69198e74910bc0",
+        "text": ""
+      },
+      "id": "0f69198e74910bc0",
+      "type": "add",
+      "after": "db151d093a481ac3",
+      "date": 1371435367500
+    },
+    {
+      "type": "edit",
+      "id": "0f69198e74910bc0",
+      "item": {
+        "type": "paragraph",
+        "id": "0f69198e74910bc0",
+        "text": "Write a fetch function that finds a good definition for commands that aren't primitives."
+      },
+      "date": 1371435431285
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "2949cd1c6f8b006f",
+        "text": ""
+      },
+      "id": "2949cd1c6f8b006f",
+      "type": "add",
+      "after": "0f69198e74910bc0",
+      "date": 1371435431789
+    },
+    {
+      "type": "edit",
+      "id": "2949cd1c6f8b006f",
+      "item": {
+        "type": "paragraph",
+        "id": "2949cd1c6f8b006f",
+        "text": "Write a fork command that runs fetched commands after a small delay."
+      },
+      "date": 1371435483439
+    },
+    {
+      "type": "edit",
+      "id": "3cb064739dea54e6",
+      "item": {
+        "type": "paragraph",
+        "id": "3cb064739dea54e6",
+        "text": "Create a new plugin with the <b>shell</b> command."
+      },
+      "date": 1371435683009
+    },
+    {
+      "type": "edit",
+      "id": "b6534cf71ec71552",
+      "item": {
+        "type": "paragraph",
+        "id": "b6534cf71ec71552",
+        "text": "Write a <b>compiler</b> to parse text with regular expressions."
+      },
+      "date": 1371435724775
+    },
+    {
+      "type": "edit",
+      "id": "802263b420eb5b8b",
+      "item": {
+        "type": "paragraph",
+        "id": "802263b420eb5b8b",
+        "text": "Write a <b>pretty printer</b> that renders the parsed text."
+      },
+      "date": 1371435737509
+    },
+    {
+      "type": "edit",
+      "id": "c5d791b36f5da518",
+      "item": {
+        "type": "paragraph",
+        "id": "c5d791b36f5da518",
+        "text": "Write rendering functions that draws <b>marks</b> on top of the pretty printed text."
+      },
+      "date": 1371435753085
+    },
+    {
+      "type": "edit",
+      "id": "db151d093a481ac3",
+      "item": {
+        "type": "paragraph",
+        "id": "db151d093a481ac3",
+        "text": "Write an <b>apply</b> function that interprets primitive commands like go, left and right."
+      },
+      "date": 1371435767774
+    },
+    {
+      "type": "edit",
+      "id": "0f69198e74910bc0",
+      "item": {
+        "type": "paragraph",
+        "id": "0f69198e74910bc0",
+        "text": "Write a <b>fetch</b> function that finds a good definition for commands that aren't primitives."
+      },
+      "date": 1371435778355
+    },
+    {
+      "type": "edit",
+      "id": "2949cd1c6f8b006f",
+      "item": {
+        "type": "paragraph",
+        "id": "2949cd1c6f8b006f",
+        "text": "Write a <b>fork</b> command that runs fetched commands after a small delay."
+      },
+      "date": 1371435796747
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "193aa1845b7f5ce9"
+      },
+      "id": "193aa1845b7f5ce9",
+      "type": "add",
+      "after": "2949cd1c6f8b006f",
+      "date": 1371436047525
+    },
+    {
+      "type": "edit",
+      "id": "193aa1845b7f5ce9",
+      "item": {
+        "type": "code",
+        "id": "193aa1845b7f5ce9",
+        "text": "./mkplugin.sh MumbleTwo"
+      },
+      "date": 1371436056972
+    },
+    {
+      "type": "move",
+      "order": [
+        "fd3576b7a3347dee",
+        "d504f43bd9d48f54",
+        "f561b962a1dd2799",
+        "dd00fe4fd3061f45",
+        "3cb064739dea54e6",
+        "193aa1845b7f5ce9",
+        "b6534cf71ec71552",
+        "802263b420eb5b8b",
+        "c5d791b36f5da518",
+        "db151d093a481ac3",
+        "0f69198e74910bc0",
+        "2949cd1c6f8b006f"
+      ],
+      "id": "193aa1845b7f5ce9",
+      "date": 1371436061368
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot left left go root\nroot right go root"
+      },
+      "date": 1371447641281
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot"
+      },
+      "date": 1371447692185
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go go root root\nroot go go go go root\nroot go go go go root\nroot left left go root\nroot right go root\nroot"
+      },
+      "date": 1371447746375
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot"
+      },
+      "date": 1371447940525
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot left go left go left go left go"
+      },
+      "date": 1371448499763
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot left left left go left left left go left left left go left left left go"
+      },
+      "date": 1371448551751
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left left go root\nroot right go root\nroot"
+      },
+      "date": 1371448628748
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right right go root\nroot"
+      },
+      "date": 1371448668179
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot"
+      },
+      "date": 1371448800989
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot square\nsquare 90 go 90 go go 90 go\n90 right right right right right "
+      },
+      "date": 1371449021612
+    },
+    {
+      "type": "edit",
+      "id": "193aa1845b7f5ce9",
+      "item": {
+        "type": "code",
+        "id": "193aa1845b7f5ce9",
+        "text": "./mkplugin.sh MumbleTwo\n./builder.pl"
+      },
+      "date": 1371509067608
+    },
+    {
+      "type": "edit",
+      "id": "b6534cf71ec71552",
+      "item": {
+        "type": "paragraph",
+        "id": "b6534cf71ec71552",
+        "text": "Write a <b>compiler</b> to parse text with regular expressions. Start with a simple program."
+      },
+      "date": 1371509116659
+    },
+    {
+      "type": "edit",
+      "id": "c5d791b36f5da518",
+      "item": {
+        "type": "paragraph",
+        "id": "c5d791b36f5da518",
+        "text": "Write rendering functions that draws <b>marks</b> on top of the pretty printed text. Create a div to hold them."
+      },
+      "date": 1371509708402
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot square\nsquare 90 go 90 go go 90 go\n90 right right right right"
+      },
+      "date": 1371514316470
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nsquare 90 go 90 go go 90 go\n90 right right right right"
+      },
+      "date": 1371514415208
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot\nsquare 90 go 90 go go 90 go\n90 right right right right"
+      },
+      "date": 1371514435447
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot go go go go root\nroot\nsquare 90 go 90 go go 90 go\n90 right right right right"
+      },
+      "date": 1371514466384
+    },
+    {
+      "type": "edit",
+      "id": "d504f43bd9d48f54",
+      "item": {
+        "type": "mumblefoo",
+        "id": "d504f43bd9d48f54",
+        "text": "root go root root\nroot go go go go root\nroot left go root\nroot right go root\nroot go go go go root\nroot"
+      },
+      "date": 1371514489214
+    }
+  ],
+  "plugin": "mumblefoo"
+}
