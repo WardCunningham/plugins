@@ -154,49 +154,52 @@ dispatch = (state, done) ->
   print state.report, value, hover, line, comment, color
   dispatch state, done
 
-window.plugins.method =
-  bind: (div, item) ->
-  emit: (div, item, done) ->
+bind = (div, item) ->
+emit = (div, item, done) ->
 
-    input = {}
-    output = {}
+  input = {}
+  output = {}
 
-    candidates = $(".item:lt(#{$('.item').index(div)})")
-    for elem in candidates
-      elem = $(elem)
-      if elem.hasClass 'radar-source'
-        _.extend input, elem.get(0).radarData()
-      else if elem.hasClass 'data'
-        _.extend input, elem.data('item').data[0]
+  candidates = $(".item:lt(#{$('.item').index(div)})")
+  for elem in candidates
+    elem = $(elem)
+    if elem.hasClass 'radar-source'
+      _.extend input, elem.get(0).radarData()
+    else if elem.hasClass 'data'
+      _.extend input, elem.data('item').data[0]
 
-    div.addClass 'radar-source'
-    div.get(0).radarData = -> output
+  div.addClass 'radar-source'
+  div.get(0).radarData = -> output
 
-    div.mousemove (e) ->
-      if $(e.target).is('td')
-        $(div).triggerHandler('thumb', $(e.target).text())
-    div.dblclick (e) ->
-      if e.shiftKey
-        wiki.dialog "JSON for Method plugin",  $('<pre/>').text(JSON.stringify(item, null, 2))
-      else
-        wiki.textEditor state.div, state.item
+  div.mousemove (e) ->
+    if $(e.target).is('td')
+      $(div).triggerHandler('thumb', $(e.target).text())
+  div.dblclick (e) ->
+    if e.shiftKey
+      wiki.dialog "JSON for Method plugin",  $('<pre/>').text(JSON.stringify(item, null, 2))
+    else
+      wiki.textEditor state.div, state.item
 
-    state = {div: div, item: item, input: input, output: output, report:[]}
-    dispatch state, (state, output) ->
-      if state.show
-        state.div.append $show = $ "<div class=data>"
-        for each in state.show
-          $show.append $ """
-            <p class=readout>#{each.readout}</p>
-            <p class=legend>#{each.legend}</p>
-          """
-      else
-        text = state.report.join "\n"
-        table = $('<table style="width:100%; background:#eee; padding:.8em; margin-bottom:5px;"/>').html text
-        state.div.append table
-      setTimeout done, 10  # slower is better for firefox
+  state = {div: div, item: item, input: input, output: output, report:[]}
+  dispatch state, (state, output) ->
+    if state.show
+      state.div.append $show = $ "<div class=data>"
+      for each in state.show
+        $show.append $ """
+          <p class=readout>#{each.readout}</p>
+          <p class=legend>#{each.legend}</p>
+        """
+    else
+      text = state.report.join "\n"
+      table = $('<table style="width:100%; background:#eee; padding:.8em; margin-bottom:5px;"/>').html text
+      state.div.append table
+    setTimeout done, 10  # slower is better for firefox
 
-  eval: (caller, item, input, done) ->
-    state = {caller: caller, item: item, input: input, output: {}}
-    dispatch state, (state, input) ->
-      done state.caller, state.output
+evaluate = (caller, item, input, done) ->
+  state = {caller: caller, item: item, input: input, output: {}}
+  dispatch state, (state, input) ->
+    done state.caller, state.output
+
+window.plugins.method = {emit, bind, eval:evaluate} if window?
+module.exports = {dispatch} if module?
+
