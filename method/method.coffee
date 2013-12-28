@@ -9,9 +9,7 @@ asValue = (obj) ->
     else NaN
 
 sum = (v) ->
-  _.reduce v,
-    (s,n) -> s += n
-    0
+  v.reduce (s,n) -> s += n
 
 avg = (v) ->
   sum(v)/v.length
@@ -92,7 +90,7 @@ dispatch = (state, done) ->
       when 'RATIO' then list[0] / list[1]
       when 'ACCUMULATE' then (sum list) + (output[label] or input[label] or 0)
       when 'FIRST' then list[0]
-      when 'PRODUCT' then _.reduce list, (p,n) -> p *= n
+      when 'PRODUCT' then list.reduce (p,n) -> p *= n
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
