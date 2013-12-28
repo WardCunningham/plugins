@@ -40,6 +40,8 @@ print = (report, value, hover, line, comment, color) ->
 
 dispatch = (state, done) ->
   state.list ||= []
+  state.input ||= {}
+  state.output ||= {}
   state.lines ||= state.item.text.split "\n"
   line = state.lines.shift()
   return done state unless line?

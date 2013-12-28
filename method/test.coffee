@@ -14,7 +14,6 @@ describe 'method plugin', ->
 		it 'defines values', (done) ->
 			state =
 				item: {text: "321 abc"}
-				output: {}
 			method.dispatch state, (state) ->
 				expect(state.output.abc).to.be 321
 				done()
@@ -23,7 +22,6 @@ describe 'method plugin', ->
 			state =
 				item: {text: "abc"}
 				input: {abc: 456}
-				output: {}
 			method.dispatch state, (state) ->
 				expect(state.list).to.eql [456]
 				done()
