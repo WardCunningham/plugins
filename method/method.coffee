@@ -96,7 +96,7 @@ dispatch = (state, done) ->
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
-      else throw new Error "don't know how to #{name}"
+      else throw new Error "don't know how to '#{name}'"
 
   color = '#eee'
   value = comment = hover = null
