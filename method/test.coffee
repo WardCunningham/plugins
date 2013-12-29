@@ -1,6 +1,50 @@
 method = require './method'
+asValue = method.asValue
 
 describe 'method plugin', ->
+
+	describe 'values', ->
+		traits = (value) -> [
+			method.asValue(value),
+			method.asUnits(value),
+			method.hasUnits(value)]
+
+		it 'can be null', ->
+			# expect(traits null).to.eql [NaN, [], false]
+
+		it 'can be a number', ->
+			expect(traits 100).to.eql [100, [], false]
+
+		it 'can be a string', ->
+			expect(traits "200").to.eql [200, [], false]
+
+		it 'can be an array', ->
+			expect(traits [300,400,500]).to.eql [300, [], false]
+
+		it 'can be an object', ->
+			expect(traits {value: 400}).to.eql [400, [], false]
+
+		it 'can have units', ->
+			expect(traits {value: 500, units:['mph']}).to.eql [500, ['mph'], true]
+
+		it 'can have a value with units', ->
+			expect(traits {value: {value: 600, units:['ppm']}}).to.eql [600, ['ppm'], true]
+
+		it 'can have empty units', ->
+			expect(traits {value: 700, units:[]}).to.eql [700, [], false]
+
+		it 'can be an array with units within', ->
+			expect(traits [{value: 800, units:['feet']}, 900]).to.eql [800, ['feet'], true]
+
+	describe 'simplify', ->
+
+		it 'no units', ->
+			value = method.simplify {value: 100}
+			expect(value).to.be 100
+
+		it 'empty units', ->
+			value = method.simplify {value: 200, units: []}
+			expect(value).to.be 200
 
 	describe 'parsing', ->
 
@@ -64,6 +108,7 @@ describe 'method plugin', ->
 			state =
 				item: {text: "2\n3\nSUM five", checks: {five: 6}}
 				caller: {errors: []}
+
 			method.dispatch state, (state) ->
 				expect(state.caller.errors[0].message).to.be "five != 6.0000"
 				done()
@@ -115,7 +160,6 @@ describe 'method plugin', ->
 			state =
 				item: {text: "1.47 (Feet/Seconds) from (Miles/Hours)"}
 			method.dispatch state, (state) ->
-				console.log state
 				expect(state.output['(Feet/Seconds) from (Miles/Hours)']).to.eql
 					value: 1.47
 					units:
@@ -124,6 +168,31 @@ describe 'method plugin', ->
 					from:
 						numerator:['miles']
 						denominator:['hours']
+				done()
+
+	describe 'conversions', ->
+
+		factor = 88 / 60
+
+		it 'apply to arguments', (done) ->
+			state =
+				input: {value: factor, units: ['fps'], from: ['mph']}
+				item: {text: "44 (fps)\n30 (mph)\nSUM speed"}
+			method.dispatch state, (state) ->
+				expect(state.output['speed']).to.eql
+					value: 88
+					units: ['fps']
+				done()
+
+
+		it 'apply to results', (done) ->
+			state =
+				input: {value: factor, units: ['fps'], from: ['mph']}
+				item: {text: "60 (mph)\nSUM (fps)"}
+			method.dispatch state, (state) ->
+				expect(state.output['(fps)']).to.eql
+					value: 88
+					units: ['fps']
 				done()
 
 

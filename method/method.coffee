@@ -13,8 +13,11 @@ asUnits = (obj) ->
   switch obj.constructor
     when Number then []
     when String then []
-    when Array then units(obj[0])
-    when Object then obj.units || units(obj.value)
+    when Array then asUnits(obj[0])
+    when Object
+      if obj.units? then obj.units
+      else if obj.value? then asUnits obj.value
+      else []
     when Function then units(obj())
     else []
 
@@ -45,8 +48,47 @@ extend = (object, properties) ->
     object[key] = val
   object
 
+emptyArray = (obj) ->
+  obj.constructor is Array and obj.length is 0
+
+simplify = (obj) ->
+  return NaN unless obj?
+  switch obj.constructor
+    when Number then obj
+    when String then +obj
+    when Array then simplify(obj[0])
+    when Object
+      if obj.units == undefined then simplify obj.value
+      else if emptyArray obj.units then simplify obj.value
+      else obj
+    when Function then simplify obj()
+    else NaN
+
+inspect = (obj) ->
+  JSON.stringify(obj).replace /\"/g, ''
+
+findFactor = (to, from) ->
+  1.4666666666666666666
+
+hasUnits = (obj) ->
+  not emptyArray asUnits obj
+
+isEqual = (a, b) ->
+  (inspect a) is (inspect b)
+
+coerce = (toUnits, value) ->
+  if isEqual toUnits, fromUnits = asUnits simplify value
+    value
+  else if factor = findFactor toUnits, fromUnits
+    return {value: factor * asValue(value), units: toUnits}
+  else
+    throw new Error "can't convert to #{inspect toUnits} from #{inspect fromUnits} "
+
 sum = (v) ->
-  v.reduce (s,n) -> s += n
+  simplify v.reduce (sum, each) ->
+    toUnits = asUnits simplify sum
+    value = coerce toUnits, each
+    {value: asValue(sum) + asValue(value), units: toUnits }
 
 avg = (v) ->
   sum(v)/v.length
@@ -71,7 +113,7 @@ print = (report, value, hover, line, comment, color) ->
   report.push """
     <tr style="background:#{color};">
       <td style="width: 20%; text-align: right; padding: 0 4px;" title="#{hover||''}">
-        <b>#{round value}</b>
+        <b>#{round asValue value}</b>
       <td title="#{long}">#{line}#{annotate comment}</td>
     """
 
@@ -120,8 +162,8 @@ dispatch = (state, done) ->
     state.show.push {readout, legend}
     value
 
-  apply = (name, list, label) ->
-    switch name
+  apply = (name, list, label='') ->
+    result = switch name
       when 'SUM' then sum list
       when 'AVG', 'AVERAGE' then avg list
       when 'MIN', 'MINIMUM' then _.min list
@@ -134,41 +176,46 @@ dispatch = (state, done) ->
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
       else throw new Error "don't know how to '#{name}'"
+    if emptyArray toUnits = asUnits parseLabel label
+      result
+    else
+      coerce toUnits, result
 
   color = '#eee'
   value = comment = hover = null
   input = state.input
   output = state.output
   list = state.list
+  label = null
 
   try
     if args = line.match /^([0-9.eE-]+) +([\w \/%(){},&-]+)$/
       result = +args[1]
-      units = parseLabel line = args[2]
+      units = parseLabel label = args[2]
       result = extend {value: result}, units if units
-      output[line] = value = result
+      output[label] = value = result
     else if args = line.match /^([A-Z]+) +([\w \/%(){},&-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
       color = '#ddd'
-      hover = "#{args[1]} of #{count} numbers\n= #{value}"
-      line = args[2]
-      if (output[line]? or input[line]?) and !state.item.silent
-        previous = asValue(output[line]||input[line])
+      hover = "#{args[1]} of #{count} numbers\n= #{inspect value}"
+      label = args[2]
+      if (output[label]? or input[label]?) and !state.item.silent
+        previous = asValue(output[label]||input[label])
         if Math.abs(change = value/previous-1) > 0.0001
           comment = "previously #{previous}\nΔ #{round(change*100)}%"
-      output[line] = value
-      if (s = state.item.checks) && (v = s[line]) != undefined
-        if asValue(v).toFixed(4) != value.toFixed(4)
+      output[label] = value
+      if (s = state.item.checks) && (v = s[label]) != undefined
+        if asValue(v).toFixed(4) != asValue(value).toFixed(4)
           color = '#faa'
-          line += " != #{asValue(v).toFixed(4)}"
-          state.caller.errors.push({message: line}) if state.caller
+          label += " != #{asValue(v).toFixed(4)}"
+          state.caller.errors.push({message: label}) if state.caller
     else if args = line.match /^([A-Z]+)$/
       [value, list, count] = [apply(args[1], list), [], list.length]
       color = '#ddd'
-      hover = "#{args[1]} of #{count} numbers\n= #{value}"
+      hover = "#{args[1]} of #{count} numbers\n= #{inspect value}"
     else if line.match /^[0-9\.eE-]+$/
       value = +line
-      line = ''
+      label = ''
     else if args = line.match /^ *([\w \/%(){},&-]+)$/
       if output[args[1]]?
         value = output[args[1]]
@@ -184,12 +231,12 @@ dispatch = (state, done) ->
     color = '#edd'
     value = null
     comment = err.message
-
   if state.caller? and color == '#edd'
     state.caller.errors.push({message: comment})
   state.list = list
-  state.list.push +value if value? and ! isNaN +value
-  print state.report, value, hover, line, comment, color
+  state.list.push value if value? and ! isNaN asValue value
+  console.log "#{line} => #{inspect state.list} #{comment||''}"
+  print state.report, value, hover, label||line, comment, color
   dispatch state, done
 
 bind = (div, item) ->
@@ -239,5 +286,5 @@ evaluate = (caller, item, input, done) ->
     done state.caller, state.output
 
 window.plugins.method = {emit, bind, eval:evaluate} if window?
-module.exports = {dispatch, parseUnits, parseRatio, parseLabel} if module?
+module.exports = {dispatch, asValue, asUnits, hasUnits, simplify, parseUnits, parseRatio, parseLabel} if module?
 
