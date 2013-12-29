@@ -5,8 +5,45 @@ asValue = (obj) ->
     when String then +obj
     when Array then asValue(obj[0])
     when Object then asValue(obj.value)
-    when Function then obj()
+    when Function then asValue obj()
     else NaN
+
+asUnits = (obj) ->
+  return [] unless obj?
+  switch obj.constructor
+    when Number then []
+    when String then []
+    when Array then units(obj[0])
+    when Object then obj.units || units(obj.value)
+    when Function then units(obj())
+    else []
+
+parseUnits = (string) ->
+  string = string.toLowerCase()
+  string = string.replace /\bsquare\s+(\w+)\b/, "$1 $1"
+  string = string.replace /\bcubic\s+(\w+)\b/, "$1 $1 $1"
+  units = string.match /(\w+)/g
+  return [] unless units?
+  units.sort()
+
+parseRatio = (string) ->
+  if ratio = string.match /^\((.+?)\/(.+?)\)$/
+    {numerator: parseUnits(ratio[1]), denominator: parseUnits(ratio[2])}
+  else if units = string.match /^\((.+?)\)$/
+    parseUnits units[1]
+  else undefined
+
+parseLabel = (string) ->
+  if phrases = string.match(/(\(.+?\)).*?(\(.+?\))?[^(]*$/)
+    result = {}
+    result.units = parseRatio phrases[1]
+    result.from = parseRatio phrases[2] if phrases[2]
+  result
+
+extend = (object, properties) ->
+  for key, val of properties
+    object[key] = val
+  object
 
 sum = (v) ->
   v.reduce (s,n) -> s += n
@@ -107,7 +144,8 @@ dispatch = (state, done) ->
   try
     if args = line.match /^([0-9.eE-]+) +([\w \/%(){},&-]+)$/
       result = +args[1]
-      line = args[2]
+      units = parseLabel line = args[2]
+      result = extend {value: result}, units if units
       output[line] = value = result
     else if args = line.match /^([A-Z]+) +([\w \/%(){},&-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
@@ -201,5 +239,5 @@ evaluate = (caller, item, input, done) ->
     done state.caller, state.output
 
 window.plugins.method = {emit, bind, eval:evaluate} if window?
-module.exports = {dispatch} if module?
+module.exports = {dispatch, parseUnits, parseRatio, parseLabel} if module?
 

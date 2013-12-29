@@ -67,3 +67,63 @@ describe 'method plugin', ->
 			method.dispatch state, (state) ->
 				expect(state.caller.errors[0].message).to.be "five != 6.0000"
 				done()
+
+	describe 'unit parsing', ->
+
+		it 'sorts words', ->
+			units = method.parseUnits "Pound Foot"
+			expect(units).to.eql ["foot", "pound"]
+
+		it 'ignores extra spaces', ->
+			units = method.parseUnits "  Pound    Foot   "
+			expect(units).to.eql ["foot", "pound"]
+
+		it 'ignores non-word characters', ->
+			units = method.parseUnits "$ & ¢"
+			expect(units).to.eql []
+
+		it 'expands squares and cubes', ->
+			units = method.parseUnits "Square Pound Cubic Foot"
+			expect(units).to.eql ["foot", "foot", "foot", "pound", "pound"]
+
+		it 'recognizes ratios', ->
+			units = method.parseRatio "(Pounds / Square Foot)"
+			expect(units).to.eql {numerator: ["pounds"], denominator: ["foot", "foot"]}
+
+		it 'recognizes non-ratios', ->
+			units = method.parseRatio "(Foot Pound)"
+			expect(units).to.eql ["foot", "pound"]
+
+		it 'ignores text outside parens', ->
+			units = method.parseLabel "Speed (MPH) Moving Average"
+			expect(units).to.eql {units: ["mph"]}
+
+		it 'recognizes conversions as unit pairs', ->
+			units = method.parseLabel "1.47	(Feet / Seconds) from (Miles / Hours) "
+			expect(units).to.eql
+				units: { numerator: [ 'feet' ], denominator: [ 'seconds' ] }
+				from: { numerator: [ 'miles' ], denominator: [ 'hours' ] }
+
+		it 'defines values as objects', (done) ->
+			state =
+				item: {text: "321 abc (mph)"}
+			method.dispatch state, (state) ->
+				expect(state.output['abc (mph)']).to.eql {value: 321, units: ["mph"]}
+				done()
+
+		it 'defines conversion constants as objects', (done) ->
+			state =
+				item: {text: "1.47 (Feet/Seconds) from (Miles/Hours)"}
+			method.dispatch state, (state) ->
+				console.log state
+				expect(state.output['(Feet/Seconds) from (Miles/Hours)']).to.eql
+					value: 1.47
+					units:
+						numerator:['feet']
+						denominator:['seconds']
+					from:
+						numerator:['miles']
+						denominator:['hours']
+				done()
+
+
