@@ -1,3 +1,7 @@
+
+
+############ units ############
+
 asValue = (obj) ->
   return NaN unless obj?
   switch obj.constructor
@@ -84,6 +88,9 @@ coerce = (toUnits, value) ->
   else
     throw new Error "can't convert to #{inspect toUnits} from #{inspect fromUnits} "
 
+
+############ calculation ############
+
 sum = (v) ->
   simplify v.reduce (sum, each) ->
     toUnits = asUnits simplify sum
@@ -116,6 +123,9 @@ print = (report, value, hover, line, comment, color) ->
         <b>#{round asValue value}</b>
       <td title="#{long}">#{line}#{annotate comment}</td>
     """
+
+
+############ interpreter ############
 
 dispatch = (state, done) ->
   state.list ||= []
@@ -238,6 +248,9 @@ dispatch = (state, done) ->
   console.log "#{line} => #{inspect state.list} #{comment||''}"
   print state.report, value, hover, label||line, comment, color
   dispatch state, done
+
+
+############ interface ############
 
 bind = (div, item) ->
 emit = (div, item, done) ->
