@@ -294,7 +294,7 @@ emit = (div, item, done) ->
       wiki.textEditor state.div, state.item
 
   state = {div: div, item: item, input: input, output: output, report:[]}
-  dispatch state, (state, output) ->
+  dispatch state, (state) ->
     if state.show
       state.div.append $show = $ "<div class=data>"
       for each in state.show
@@ -308,6 +308,9 @@ emit = (div, item, done) ->
       state.div.append table
       if input['debug']
         for label, value of state.output
+          state.div.append $("<p class=error>#{label} =><br> #{inspect value}</p>")
+      if output['debug']
+        for label, value of state.input
           state.div.append $("<p class=error>#{label} =><br> #{inspect value}</p>")
     setTimeout done, 10  # slower is better for firefox
 
