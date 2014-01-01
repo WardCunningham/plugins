@@ -172,11 +172,18 @@ describe 'method plugin', ->
 
 	describe 'conversions', ->
 
-		factor = 88 / 60
+		input =
+			"(fps) from (mph)":
+				value: 88 / 60
+				units: ['fps']
+				from: ['mph']
+			"speed":
+				value: 30
+				units: ['mph']
 
 		it 'apply to arguments', (done) ->
 			state =
-				input: {value: factor, units: ['fps'], from: ['mph']}
+				input: input
 				item: {text: "44 (fps)\n30 (mph)\nSUM speed"}
 			method.dispatch state, (state) ->
 				expect(state.output['speed']).to.eql
@@ -184,15 +191,70 @@ describe 'method plugin', ->
 					units: ['fps']
 				done()
 
+		it 'apply to variables', (done) ->
+			state =
+				input: input
+				item: {text: "44 (fps)\nspeed\nSUM speed"}
+			method.dispatch state, (state) ->
+				expect(state.output['speed']).to.eql
+					value: 88
+					units: ['fps']
+				done()
 
 		it 'apply to results', (done) ->
 			state =
-				input: {value: factor, units: ['fps'], from: ['mph']}
+				input: input
 				item: {text: "60 (mph)\nSUM (fps)"}
 			method.dispatch state, (state) ->
 				expect(state.output['(fps)']).to.eql
 					value: 88
 					units: ['fps']
+				done()
+
+		it 'selected from alternatives', (done) ->
+			alternatives =
+			"speeding":
+				value: 120
+				units: ['mph']
+			"(fps) from (mph)":
+				value: 88 / 60
+				units: ['fps']
+				from: ['mph']
+			"(miles/hour) from (mph)":
+				value: 1
+				units: {numerator: ['miles'], denominator: ['hour']}
+				from: ['mph']
+			"speed":
+				value: 88
+				units: ['fps']
+			state =
+				input: alternatives
+				item: {text: "speeding\nSUM (fps)"}
+			method.dispatch state, (state) ->
+				expect(state.output['(fps)']).to.eql
+					value: 88*2
+					units: ['fps']
+				done()
+
+		it 'omitted when unneeded', (done) ->
+			state =
+				input: input
+				item: {text: "60 (mph)\n30 (mph)\nSUM"}
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql
+					value: 90
+					units: ['mph']
+				done()
+
+		it 'reported when missing', (done) ->
+			state =
+				item: {text: "88 (fps)\n30 (mph)\nSUM"}
+				caller: {errors: []}
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql
+					value: 88
+					units: ['fps']
+				expect(state.caller.errors[0].message).to.be "can't convert to [fps] from [mph]"
 				done()
 
 

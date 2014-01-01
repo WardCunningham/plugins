@@ -2,6 +2,8 @@
 
 ############ units ############
 
+conversions = null
+
 asValue = (obj) ->
   return NaN unless obj?
   switch obj.constructor
@@ -69,10 +71,21 @@ simplify = (obj) ->
     else NaN
 
 inspect = (obj) ->
-  JSON.stringify(obj).replace /\"/g, ''
+  return "nullish" unless obj?
+  switch obj.constructor
+    when Number then obj
+    when String then obj
+    when Array then JSON.stringify(obj).replace /\"/g, ''
+    when Object then JSON.stringify(obj).replace /\"/g, ''
+    when Function then 'functionish'
+    else "wierdish"
 
 findFactor = (to, from) ->
-  1.4666666666666666666
+  for label, value of conversions
+    if value.from? and isEqual from, value.from
+      if isEqual to, value.units
+        return asValue value
+  return null
 
 hasUnits = (obj) ->
   not emptyArray asUnits obj
@@ -81,12 +94,13 @@ isEqual = (a, b) ->
   (inspect a) is (inspect b)
 
 coerce = (toUnits, value) ->
+  # console.log "coerce to #{inspect toUnits}"
   if isEqual toUnits, fromUnits = asUnits simplify value
     value
   else if factor = findFactor toUnits, fromUnits
     return {value: factor * asValue(value), units: toUnits}
   else
-    throw new Error "can't convert to #{inspect toUnits} from #{inspect fromUnits} "
+    throw new Error "can't convert to #{inspect toUnits} from #{inspect fromUnits}"
 
 
 ############ calculation ############
@@ -193,7 +207,7 @@ dispatch = (state, done) ->
 
   color = '#eee'
   value = comment = hover = null
-  input = state.input
+  conversions = input = state.input
   output = state.output
   list = state.list
   label = null
@@ -230,7 +244,7 @@ dispatch = (state, done) ->
       if output[args[1]]?
         value = output[args[1]]
       else if input[args[1]]?
-        value = asValue(input[args[1]])
+        value = input[args[1]]
       else
         color = '#edd'
         comment = "can't find value of '#{line}'"
@@ -240,6 +254,7 @@ dispatch = (state, done) ->
   catch err
     color = '#edd'
     value = null
+    # console.log "trouble", inspect statck
     comment = err.message
   if state.caller? and color == '#edd'
     state.caller.errors.push({message: comment})
@@ -291,6 +306,9 @@ emit = (div, item, done) ->
       text = state.report.join "\n"
       table = $('<table style="width:100%; background:#eee; padding:.8em; margin-bottom:5px;"/>').html text
       state.div.append table
+      if input['debug']
+        for label, value of state.output
+          state.div.append $("<p class=error>#{label} =><br> #{inspect value}</p>")
     setTimeout done, 10  # slower is better for firefox
 
 evaluate = (caller, item, input, done) ->
