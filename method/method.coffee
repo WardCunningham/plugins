@@ -102,6 +102,30 @@ coerce = (toUnits, value) ->
   else
     throw new Error "can't convert to #{inspect toUnits} from #{inspect fromUnits}"
 
+unpackUnits = (value) ->
+  v = asValue value
+  u = asUnits value
+  if u.constructor is Array
+    numerator = u
+    denominator = []
+  else
+    numerator = u.numerator
+    denominator = u.denominator
+  [v, numerator, denominator]
+
+packUnits = (nums, denoms) ->
+  n = [].concat nums...
+  d = [].concat denoms...
+  keep = []
+  for unit in d
+    if (where = n.indexOf unit) is -1
+      keep.push unit
+    else
+      n.splice where, 1
+  if keep.length
+    {numerator: n.sort(), denominator: keep.sort()}
+  else
+    n.sort()
 
 ############ calculation ############
 
@@ -110,6 +134,12 @@ sum = (v) ->
     toUnits = asUnits simplify sum
     value = coerce toUnits, each
     {value: asValue(sum) + asValue(value), units: toUnits }
+
+product = (v) ->
+  simplify v.reduce (prod, each) ->
+    [p, pn, pd] = unpackUnits prod
+    [f, en, ed] = unpackUnits each
+    {value: p*f, units: packUnits([pn,en],[pd,ed])}
 
 avg = (v) ->
   sum(v)/v.length
@@ -195,7 +225,7 @@ dispatch = (state, done) ->
       when 'RATIO' then list[0] / list[1]
       when 'ACCUMULATE' then (sum list) + (output[label] or input[label] or 0)
       when 'FIRST' then list[0]
-      when 'PRODUCT' then list.reduce (p,n) -> p *= n
+      when 'PRODUCT' then product list
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label

@@ -257,4 +257,37 @@ describe 'method plugin', ->
 				expect(state.caller.errors[0].message).to.be "can't convert to [fps] from [mph]"
 				done()
 
+	describe 'products', ->
+
+		input =
+			"(Feet/Seconds) per (Miles/Hours)":
+				value: 88 / 60
+				units: ['fps']
+				from: ['mph']
+			"side":
+				value: 6
+				units: ['Inches']
+
+		it 'repeats units', (done) ->
+			state =
+				input: input
+				item: {text: "side\nside\nPRODUCT area"}
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql
+					value: 36
+					units: ['Inches', 'Inches']
+				done()
+
+		it 'cancels units', (done) ->
+			state =
+				input: input
+				item: {text: "2 (yd)\n3 (ft/yd)\n12 (in/ft)\nPRODUCT height"}
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql
+					value: 72
+					units: ['in']
+				done()
+
+
+
 
