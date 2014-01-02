@@ -257,6 +257,15 @@ describe 'method plugin', ->
 				expect(state.caller.errors[0].message).to.be "can't convert to [fps] from [mph]"
 				done()
 
+		it 'adds units to SHOW legend', (done) ->
+			state =
+				item: {text: "36 (in/yd)\nSHOW Mumble"}
+			method.dispatch state, (state) ->
+				expect(state.show[0]).to.eql
+					legend: "Mumble<br>( in / yd )"
+					readout: "36"
+				done()
+
 	describe 'products', ->
 
 		input =

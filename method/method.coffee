@@ -127,6 +127,15 @@ packUnits = (nums, denoms) ->
   else
     n.sort()
 
+printUnits = (units) ->
+  if emptyArray units
+    ''
+  else if units.constructor is Array
+    units.join ' '
+  else
+    "#{units.numerator.join ' '} / #{units.denominator.join ' '}"
+
+
 ############ calculation ############
 
 sum = (v) ->
@@ -217,7 +226,8 @@ dispatch = (state, done) ->
 
   show = (list, legend) ->
     value = sum list
-    readout = Number(value).toLocaleString('en')
+    legend += "<br>( #{printUnits asUnits value} )" if emptyArray(asUnits parseLabel legend)
+    readout = Number(asValue value).toLocaleString('en')
     state.show ||= []
     state.show.push {readout, legend}
     value
@@ -257,7 +267,7 @@ dispatch = (state, done) ->
     else if args = line.match /^([A-Z]+) +([\w \/%(){},&-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
       color = '#ddd'
-      hover = "#{args[1]} of #{count} numbers\n= #{inspect value}"
+      hover = "#{args[1]} of #{count} numbers\n= #{asValue value} #{printUnits asUnits value}"
       label = args[2]
       if (output[label]? or input[label]?) and !state.item.silent
         previous = asValue(output[label]||input[label])
@@ -272,7 +282,7 @@ dispatch = (state, done) ->
     else if args = line.match /^([A-Z]+)$/
       [value, list, count] = [apply(args[1], list), [], list.length]
       color = '#ddd'
-      hover = "#{args[1]} of #{count} numbers\n= #{inspect value}"
+      hover = "#{args[1]} of #{count} numbers\n= #{asValue value} #{printUnits asUnits value}"
     else if line.match /^[0-9\.eE-]+$/
       value = +line
       label = ''
