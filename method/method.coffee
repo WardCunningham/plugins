@@ -138,8 +138,14 @@ sum = (v) ->
 product = (v) ->
   simplify v.reduce (prod, each) ->
     [p, pn, pd] = unpackUnits prod
-    [f, en, ed] = unpackUnits each
-    {value: p*f, units: packUnits([pn,en],[pd,ed])}
+    [e, en, ed] = unpackUnits each
+    {value: p*e, units: packUnits([pn,en],[pd,ed])}
+
+ratio = (v) ->
+  # list[0] / list[1]
+  [n, nn, nd] = unpackUnits v[0]
+  [d, dn, dd] = unpackUnits v[1]
+  simplify {value: n/d, units: packUnits([nn,dd],[nd,dn])}
 
 avg = (v) ->
   sum(v)/v.length
@@ -222,7 +228,7 @@ dispatch = (state, done) ->
       when 'AVG', 'AVERAGE' then avg list
       when 'MIN', 'MINIMUM' then _.min list
       when 'MAX', 'MAXIMUM' then _.max list
-      when 'RATIO' then list[0] / list[1]
+      when 'RATIO' then ratio list
       when 'ACCUMULATE' then (sum list) + (output[label] or input[label] or 0)
       when 'FIRST' then list[0]
       when 'PRODUCT' then product list

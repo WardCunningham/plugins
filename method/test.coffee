@@ -288,6 +288,16 @@ describe 'method plugin', ->
 					units: ['in']
 				done()
 
+		it 'invert units for ratio', (done) ->
+			state =
+				input: input
+				item: {text: "72 (in)\n2 (yd)\nRATIO"}
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql
+					value: 36
+					units: {numerator: ['in'], denominator: ['yd']}
+				done()
+
 
 
 
