@@ -188,7 +188,13 @@ print = (report, value, hover, line, comment, color) ->
 
 ############ expression ############
 
-lexer = (str) ->
+ident = (str, syms) ->
+  if str.match /^\d+(\.\d+)?(e\d+)?$/
+    Number str
+  else
+    syms[str]
+
+lexer = (str, syms={}) ->
   buf = []
   tmp = ""
   i = 0
@@ -197,14 +203,12 @@ lexer = (str) ->
     continue  if c is " "
     if c is "+" or c is "-" or c is "*" or c is "/" or c is "(" or c is ")"
       if tmp
-        # if tmp exists, that is a number
-        # so push before operator
-        buf.push Number(tmp)
+        buf.push ident(tmp, syms)
         tmp = ""
       buf.push c
       continue
     tmp += c
-  buf.push Number(tmp) if tmp
+  buf.push ident(tmp, syms) if tmp
   buf
 
 parser = (lexed) ->
@@ -295,7 +299,7 @@ dispatch = (state, done) ->
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
-      when 'CALC' then parser lexer label
+      when 'CALC' then parser lexer(label, state.output)
       else throw new Error "don't know how to '#{name}'"
     if name is 'CALC' or emptyArray toUnits = asUnits parseLabel label
       result

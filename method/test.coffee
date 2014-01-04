@@ -309,9 +309,14 @@ describe 'method plugin', ->
 
 	describe 'expressions', ->
 
-		it 'can be lexed', ->
+		it 'can be lexed with literals', ->
 			tokens = method.lexer '12+(345-678)*910'
 			expect(tokens).to.eql [12, '+', '(', 345, '-', 678, ')', '*', 910]
+
+		it 'can be lexed with variables', ->
+			syms = {alpha: 100, beta: 200}
+			tokens = method.lexer '12+(alpha-678)*beta', syms
+			expect(tokens).to.eql [12, '+', '(', 100, '-', 678, ')', '*', 200]
 
 		it 'can be constant', ->
 			value = method.parser [12]
@@ -327,8 +332,8 @@ describe 'method plugin', ->
 
 		it 'applied by CALC', (done) ->
 			state =
-				item: {text: "CALC 12+(345-678)*910"}
-			debugger
+				output: {dozen: 12}
+				item: {text: "CALC dozen+(345-678)*910"}
 			method.dispatch state, (state) ->
 				expect(state.list[0]).to.be -303018
 				done()
