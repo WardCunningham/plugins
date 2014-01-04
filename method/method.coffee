@@ -192,7 +192,11 @@ ident = (str, syms) ->
   if str.match /^\d+(\.\d+)?(e\d+)?$/
     Number str
   else
-    syms[str]
+    regexp = new RegExp "\\b#{str}\\b"
+    for label, value of syms
+      console.log "does '#{label}' match '#{str}'"
+      return value if label.match regexp
+    throw new Error "can't find value for '#{str}'"
 
 lexer = (str, syms={}) ->
   buf = []
@@ -219,9 +223,9 @@ parser = (lexed) ->
     return c  if typeof (c) is "number"
     if c is "("
       c = expr()
-      throw "missing paren"  if lexed.shift() isnt ")"
+      throw new Error "missing paren"  if lexed.shift() isnt ")"
       return c
-    throw "missing number"
+    throw new Error "missing number"
   term = ->
     c = fact()
     while lexed[0] is "*" or lexed[0] is "/"

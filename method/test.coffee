@@ -335,10 +335,18 @@ describe 'method plugin', ->
 
 		it 'applied by CALC', (done) ->
 			state =
-				output: {dozen: 12}
-				item: {text: "CALC dozen+(345-678)*910"}
+				item: {text: "CALC 12+(345-678)*910"}
 			method.dispatch state, (state) ->
 				expect(state.list[0]).to.be -303018
+				done()
+
+		it 'applied by CALC with variables', (done) ->
+			state =
+				output: {"Hourly Rate": 16.45, "Regular Hours": 40, "Overtime Hours": 12}
+				item: {text: "CALC Rate * ( Regular + 1.5 * Overtime )"}
+			console.log 'state', state
+			method.dispatch state, (state) ->
+				expect(Math.round(state.list[0])).to.eql 954
 				done()
 
 
