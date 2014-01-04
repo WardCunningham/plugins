@@ -236,7 +236,7 @@ describe 'method plugin', ->
 					units: ['fps']
 				done()
 
-		it 'omitted when unneeded', (done) ->
+		it 'optional when units are acceptable', (done) ->
 			state =
 				input: input
 				item: {text: "60 (mph)\n30 (mph)\nSUM"}
@@ -248,13 +248,13 @@ describe 'method plugin', ->
 
 		it 'reported when missing', (done) ->
 			state =
-				item: {text: "88 (fps)\n30 (mph)\nSUM"}
+				item: {text: "22 (fps)\n15 (mps)\nSUM"}
 				caller: {errors: []}
 			method.dispatch state, (state) ->
 				expect(state.list[0]).to.eql
-					value: 88
+					value: 22
 					units: ['fps']
-				expect(state.caller.errors[0].message).to.be "can't convert to [mph] from [fps]"
+				expect(state.caller.errors[0].message).to.be "can't convert to [mps] from [fps]"
 				done()
 
 		it 'adds units to SHOW legend', (done) ->

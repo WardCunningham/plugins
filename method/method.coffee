@@ -85,6 +85,9 @@ findFactor = (to, from) ->
     if value.from? and isEqual from, value.from
       if isEqual to, value.units
         return asValue value
+    if value.from? and isEqual to, value.from
+      if isEqual from, value.units
+        return 1/(asValue value)
   return null
 
 hasUnits = (obj) ->
