@@ -134,9 +134,9 @@ printUnits = (units) ->
   if emptyArray units
     ''
   else if units.constructor is Array
-    units.join ' '
+    "( #{units.join ' '} )"
   else
-    "#{units.numerator.join ' '} / #{units.denominator.join ' '}"
+    "( #{units.numerator.join ' '} / #{units.denominator.join ' '} )"
 
 
 ############ calculation ############
@@ -284,7 +284,7 @@ dispatch = (state, done) ->
 
   show = (list, legend) ->
     value = sum list
-    legend += "<br>( #{printUnits asUnits value} )" if emptyArray(asUnits parseLabel legend)
+    legend += "<br>#{printUnits asUnits value}" if emptyArray(asUnits parseLabel legend)
     readout = Number(asValue value).toLocaleString('en')
     state.show ||= []
     state.show.push {readout, legend}
