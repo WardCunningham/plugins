@@ -314,12 +314,12 @@ dispatch = (state, done) ->
   label = null
 
   try
-    if args = line.match /^([0-9.eE-]+) +([\w \/%(){},&-]+)$/
+    if args = line.match /^([0-9.eE-]+) +([\w \.%(){},&\*\/+-]+)$/
       result = +args[1]
       units = parseLabel label = args[2]
       result = extend {value: result}, units if units
       output[label] = value = result
-    else if args = line.match /^([A-Z]+) +([\w \/%(){},&\*\/+-]+)$/
+    else if args = line.match /^([A-Z]+) +([\w \.%(){},&\*\/+-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
       color = '#ddd'
       hover = "#{args[1]} of #{count} numbers\n= #{asValue value} #{printUnits asUnits value}"
@@ -341,7 +341,7 @@ dispatch = (state, done) ->
     else if line.match /^[0-9\.eE-]+$/
       value = +line
       label = ''
-    else if args = line.match /^ *([\w \/%(){},&\*\/+-]+)$/
+    else if args = line.match /^ *([\w \.%(){},&\*\/+-]+)$/
       if output[args[1]]?
         value = output[args[1]]
       else if input[args[1]]?
