@@ -3,6 +3,9 @@ asValue = method.asValue
 
 describe 'method plugin', ->
 
+	beforeEach ->
+		console.log '-----------------------------------------'
+
 	describe 'values', ->
 		traits = (value) -> [
 			method.asValue(value),
