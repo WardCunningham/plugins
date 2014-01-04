@@ -147,6 +147,12 @@ sum = (v) ->
     value = coerce toUnits, sum
     {value: asValue(value) + asValue(each), units: toUnits }
 
+difference = (v) ->
+  # list[0] - list[1]
+  toUnits = asUnits simplify v[1]
+  value = coerce toUnits, v[0]
+  {value: asValue(value) - asValue(v[1]), units: toUnits }
+
 product = (v) ->
   simplify v.reduce (prod, each) ->
     [p, pn, pd] = unpackUnits prod
@@ -194,7 +200,6 @@ ident = (str, syms) ->
   else
     regexp = new RegExp "\\b#{str}\\b"
     for label, value of syms
-      console.log "does '#{label}' match '#{str}'"
       return value if label.match regexp
     throw new Error "can't find value for '#{str}'"
 
@@ -205,7 +210,7 @@ lexer = (str, syms={}) ->
   while i < str.length
     c = str[i++]
     continue  if c is " "
-    if c is "+" or c is "-" or c is "*" or c is "/" or c is "(" or c is ")"
+    if c in ["+", "-", "*", "/", "(", ")"]
       if tmp
         buf.push ident(tmp, syms)
         tmp = ""
@@ -220,25 +225,25 @@ parser = (lexed) ->
   # fact : number | '(' expr ')'
   fact = ->
     c = lexed.shift()
-    return c  if typeof (c) is "number"
+    return c  if typeof(c) in ["number", "object"]
     if c is "("
       c = expr()
       throw new Error "missing paren"  if lexed.shift() isnt ")"
       return c
-    throw new Error "missing number"
+    throw new Error "missing value"
   term = ->
     c = fact()
-    while lexed[0] is "*" or lexed[0] is "/"
+    while lexed[0] in ["*", "/"]
       o = lexed.shift()
-      c = c * term()  if o is "*"
-      c = c / term()  if o is "/"
+      c = product [c, term()]  if o is "*"
+      c = ratio [c, term()]  if o is "/"
     c
   expr = ->
     c = term()
-    while lexed[0] is "+" or lexed[0] is "-"
+    while lexed[0] in ["+", "-"]
       o = lexed.shift()
-      c = c + term()  if o is "+"
-      c = c - term()  if o is "-"
+      c = sum [c, term()]  if o is "+"
+      c = difference [c, term()]  if o is "-"
     c
   expr()
 

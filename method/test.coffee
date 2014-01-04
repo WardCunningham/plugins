@@ -142,6 +142,10 @@ describe 'method plugin', ->
 			units = method.parseRatio "(Foot Pound)"
 			expect(units).to.eql ["foot", "pound"]
 
+		it 'recognizes inversions', ->
+			units = method.parseRatio "( / Seconds)"
+			expect(units).to.eql {numerator: [], denominator: ["seconds"]}
+
 		it 'ignores text outside parens', ->
 			units = method.parseLabel "Speed (MPH) Moving Average"
 			expect(units).to.eql {units: ["mph"]}
@@ -349,4 +353,18 @@ describe 'method plugin', ->
 				expect(Math.round(state.list[0])).to.eql 954
 				done()
 
+		it 'applied by CALC with variables and units', (done) ->
+			state =
+				item: {text: "20.00 Rate (dollar / hour)\n40 Regular (hour)\n12 Overtime (hour)\nCALC Rate * ( Regular + 1.5 * Overtime )"}
+			console.log 'state', state
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql {value: 1160.00, units: ['dollar']}
+				done()
 
+		it 'applied by CALC with all operators, variables and units', (done) ->
+			state =
+				item: {text: "10 w (in)\n30 h (in)\n15 t (s)\nCALC t*(h/t + w/t - (h+w)/t)"}
+			console.log 'state', state
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.eql {value: 0, units: ['in']}
+				done()
