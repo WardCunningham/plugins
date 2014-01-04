@@ -307,6 +307,30 @@ describe 'method plugin', ->
 					units: {numerator: ['in'], denominator: ['yd']}
 				done()
 
+	describe 'expressions', ->
 
+		it 'can be lexed', ->
+			tokens = method.lexer '12+(345-678)*910'
+			expect(tokens).to.eql [12, '+', '(', 345, '-', 678, ')', '*', 910]
+
+		it 'can be constant', ->
+			value = method.parser [12]
+			expect(value).to.be 12
+
+		it 'do multiply first', ->
+			value = method.parser [2, '+', 3, '*', 5]
+			expect(value).to.be 17
+
+		it 'do parens first', ->
+			value = method.parser ['(', 2, '+', 3, ')', '*', 5]
+			expect(value).to.be 25
+
+		it 'applied by CALC', (done) ->
+			state =
+				item: {text: "CALC 12+(345-678)*910"}
+			debugger
+			method.dispatch state, (state) ->
+				expect(state.list[0]).to.be -303018
+				done()
 
 

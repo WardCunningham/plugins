@@ -186,6 +186,53 @@ print = (report, value, hover, line, comment, color) ->
       <td title="#{long}">#{line}#{annotate comment}</td>
     """
 
+############ expression ############
+
+lexer = (str) ->
+  buf = []
+  tmp = ""
+  i = 0
+  while i < str.length
+    c = str[i++]
+    continue  if c is " "
+    if c is "+" or c is "-" or c is "*" or c is "/" or c is "(" or c is ")"
+      if tmp
+        # if tmp exists, that is a number
+        # so push before operator
+        buf.push Number(tmp)
+        tmp = ""
+      buf.push c
+      continue
+    tmp += c
+  buf.push Number(tmp) if tmp
+  buf
+
+parser = (lexed) ->
+  # term : fact { (*|/) fact }
+  # fact : number | '(' expr ')'
+  fact = ->
+    c = lexed.shift()
+    return c  if typeof (c) is "number"
+    if c is "("
+      c = expr()
+      throw "missing paren"  if lexed.shift() isnt ")"
+      return c
+    throw "missing number"
+  term = ->
+    c = fact()
+    while lexed[0] is "*" or lexed[0] is "/"
+      o = lexed.shift()
+      c = c * term()  if o is "*"
+      c = c / term()  if o is "/"
+    c
+  expr = ->
+    c = term()
+    while lexed[0] is "+" or lexed[0] is "-"
+      o = lexed.shift()
+      c = c + term()  if o is "+"
+      c = c - term()  if o is "-"
+    c
+  expr()
 
 ############ interpreter ############
 
@@ -248,8 +295,9 @@ dispatch = (state, done) ->
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
+      when 'CALC' then parser lexer label
       else throw new Error "don't know how to '#{name}'"
-    if emptyArray toUnits = asUnits parseLabel label
+    if name is 'CALC' or emptyArray toUnits = asUnits parseLabel label
       result
     else
       coerce toUnits, result
@@ -267,7 +315,7 @@ dispatch = (state, done) ->
       units = parseLabel label = args[2]
       result = extend {value: result}, units if units
       output[label] = value = result
-    else if args = line.match /^([A-Z]+) +([\w \/%(){},&-]+)$/
+    else if args = line.match /^([A-Z]+) +([\w \/%(){},&\*\/+-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
       color = '#ddd'
       hover = "#{args[1]} of #{count} numbers\n= #{asValue value} #{printUnits asUnits value}"
@@ -289,7 +337,7 @@ dispatch = (state, done) ->
     else if line.match /^[0-9\.eE-]+$/
       value = +line
       label = ''
-    else if args = line.match /^ *([\w \/%(){},&-]+)$/
+    else if args = line.match /^ *([\w \/%(){},&\*\/+-]+)$/
       if output[args[1]]?
         value = output[args[1]]
       else if input[args[1]]?
@@ -369,5 +417,5 @@ evaluate = (caller, item, input, done) ->
     done state.caller, state.output
 
 window.plugins.method = {emit, bind, eval:evaluate} if window?
-module.exports = {dispatch, asValue, asUnits, hasUnits, simplify, parseUnits, parseRatio, parseLabel} if module?
+module.exports = {lexer, parser, dispatch, asValue, asUnits, hasUnits, simplify, parseUnits, parseRatio, parseLabel} if module?
 
