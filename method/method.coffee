@@ -253,6 +253,7 @@ dispatch = (state, done) ->
   state.list ||= []
   state.input ||= {}
   state.output ||= {}
+  state.local ||= {}
   state.lines ||= state.item.text.split "\n"
   line = state.lines.shift()
   return done state unless line?
@@ -308,7 +309,7 @@ dispatch = (state, done) ->
       when 'LOOKUP' then lookup list
       when 'POLYNOMIAL' then polynomial list[0], label
       when 'SHOW' then show list, label
-      when 'CALC' then parser lexer(label, state.output)
+      when 'CALC' then parser lexer(label, state.local)
       else throw new Error "don't know how to '#{name}'"
     if name is 'CALC' or emptyArray toUnits = asUnits parseLabel label
       result
@@ -319,6 +320,7 @@ dispatch = (state, done) ->
   value = comment = hover = null
   conversions = input = state.input
   output = state.output
+  local = state.local
   list = state.list
   label = null
 
@@ -327,7 +329,7 @@ dispatch = (state, done) ->
       result = +args[1]
       units = parseLabel label = args[2]
       result = extend {value: result}, units if units
-      output[label] = value = result
+      local[label] = output[label] = value = result
     else if args = line.match /^([A-Z]+) +([\w \.%(){},&\*\/+-]+)$/
       [value, list, count] = [apply(args[1], list, args[2]), [], list.length]
       color = '#ddd'
@@ -337,7 +339,7 @@ dispatch = (state, done) ->
         previous = asValue(output[label]||input[label])
         if Math.abs(change = value/previous-1) > 0.0001
           comment = "previously #{previous}\nΔ #{round(change*100)}%"
-      output[label] = value
+      local[label] = output[label] = value
       if (s = state.item.checks) && (v = s[label]) != undefined
         if asValue(v).toFixed(4) != asValue(value).toFixed(4)
           color = '#faa'
@@ -345,6 +347,7 @@ dispatch = (state, done) ->
           state.caller.errors.push({message: label}) if state.caller
     else if args = line.match /^([A-Z]+)$/
       [value, list, count] = [apply(args[1], list), [], list.length]
+      local[args[1]] = value
       color = '#ddd'
       hover = "#{args[1]} of #{count} numbers\n= #{asValue value} #{printUnits asUnits value}"
     else if line.match /^[0-9\.eE-]+$/
@@ -352,9 +355,9 @@ dispatch = (state, done) ->
       label = ''
     else if args = line.match /^ *([\w \.%(){},&\*\/+-]+)$/
       if output[args[1]]?
-        value = output[args[1]]
+        local[args[1]] = value = output[args[1]]
       else if input[args[1]]?
-        value = input[args[1]]
+        local[args[1]] = value = input[args[1]]
       else
         color = '#edd'
         comment = "can't find value of '#{line}'"

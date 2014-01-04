@@ -346,7 +346,7 @@ describe 'method plugin', ->
 
 		it 'applied by CALC with variables', (done) ->
 			state =
-				output: {"Hourly Rate": 16.45, "Regular Hours": 40, "Overtime Hours": 12}
+				local: {"Hourly Rate": 16.45, "Regular Hours": 40, "Overtime Hours": 12}
 				item: {text: "CALC Rate * ( Regular + 1.5 * Overtime )"}
 			console.log 'state', state
 			method.dispatch state, (state) ->
