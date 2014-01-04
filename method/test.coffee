@@ -184,7 +184,7 @@ describe 'method plugin', ->
 		it 'apply to arguments', (done) ->
 			state =
 				input: input
-				item: {text: "44 (fps)\n30 (mph)\nSUM speed"}
+				item: {text: "30 (mph)\n44 (fps)\nSUM speed"}
 			method.dispatch state, (state) ->
 				expect(state.output['speed']).to.eql
 					value: 88
@@ -194,7 +194,7 @@ describe 'method plugin', ->
 		it 'apply to variables', (done) ->
 			state =
 				input: input
-				item: {text: "44 (fps)\nspeed\nSUM speed"}
+				item: {text: "speed\n44 (fps)\nSUM speed"}
 			method.dispatch state, (state) ->
 				expect(state.output['speed']).to.eql
 					value: 88
@@ -254,7 +254,7 @@ describe 'method plugin', ->
 				expect(state.list[0]).to.eql
 					value: 88
 					units: ['fps']
-				expect(state.caller.errors[0].message).to.be "can't convert to [fps] from [mph]"
+				expect(state.caller.errors[0].message).to.be "can't convert to [mph] from [fps]"
 				done()
 
 		it 'adds units to SHOW legend', (done) ->

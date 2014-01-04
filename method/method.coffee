@@ -140,9 +140,9 @@ printUnits = (units) ->
 
 sum = (v) ->
   simplify v.reduce (sum, each) ->
-    toUnits = asUnits simplify sum
-    value = coerce toUnits, each
-    {value: asValue(sum) + asValue(value), units: toUnits }
+    toUnits = asUnits simplify each
+    value = coerce toUnits, sum
+    {value: asValue(value) + asValue(each), units: toUnits }
 
 product = (v) ->
   simplify v.reduce (prod, each) ->
