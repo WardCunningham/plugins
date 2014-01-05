@@ -344,7 +344,7 @@ describe 'method plugin', ->
 				expect(state.list[0]).to.be -303018
 				done()
 
-		it 'applied by CALC with variables', (done) ->
+		it 'applied by CALC with local variables', (done) ->
 			state =
 				local: {"Hourly Rate": 16.45, "Regular Hours": 40, "Overtime Hours": 12}
 				item: {text: "CALC Rate * ( Regular + 1.5 * Overtime )"}
@@ -353,7 +353,16 @@ describe 'method plugin', ->
 				expect(Math.round(state.list[0])).to.eql 954
 				done()
 
-		it 'applied by CALC with variables and units', (done) ->
+		it 'applied by CALC with recalled input variables', (done) ->
+			state =
+				input: {"Hourly Rate": 16.45, "Regular Hours": 40, "Overtime Hours": 12}
+				item: {text: "Hourly Rate\nRegular Hours\nOvertime Hours\nCALC Rate * ( Regular + 1.5 * Overtime )"}
+			console.log 'state', state
+			method.dispatch state, (state) ->
+				expect(Math.round(state.list[0])).to.eql 954
+				done()
+
+		it 'applied by CALC with computed variables and units', (done) ->
 			state =
 				item: {text: "20.00 Rate (dollar / hour)\n40 Regular (hour)\n12 Overtime (hour)\nCALC Rate * ( Regular + 1.5 * Overtime )"}
 			console.log 'state', state
