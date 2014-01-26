@@ -1,3 +1,10 @@
+Deprecated Repository
+=====================
+
+All federated wiki plugin source code here has been moved to individual repositories in the GitHub [FedWiki](http://github.com/fedwiki) organization.
+We will be developing better guidance for creating new plugins as we gain experience with the new repositiory configuration.
+
+
 Client Plugin development
 =========================
 
